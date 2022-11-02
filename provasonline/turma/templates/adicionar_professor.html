@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <form action="" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="hidden" name="id_turma" value="{{ request.args.get('id') }}"/>
+        <div class="d-flex justify-content-end float-right">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Nome</td>
+                    <td>Professor da Turma</td>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                {% for p in professores %}
+                    <tr>
+                        <td>{{p[0].id}}</td>
+                        <td>{{p[0].nome}}</td>
+                        <td><input name="professor" value="{{ p[0].id }}" class="form-check-input" type="checkbox" {{ 'checked' if p[1].id_professor else '' }}></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </form>
+</div>
+{% endblock %}

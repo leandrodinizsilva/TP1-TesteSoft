@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for t in turmas %}
+
+<div class="col-sm-12 p-2">
+    <div class="container">
+        <div class="title">
+            <h3>{{t.nome}}</h3><br>
+        </div>
+        <div class="body">
+            <div class="card">
+                <div class="card-header">
+                    Professor
+                </div>
+                <div class="card-body">
+                    {% for p in professores %}
+                        {{p[0].nome}}
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-header">
+                    Descricao
+                </div>
+                <div class="card-body">
+                     {{ t.descricao }}
+                </div>
+            </div>         
+            {% if current_user.urole == 'professor' %}
+            <br>
+            <div class="card">
+                <div class="card-header">
+                    Ações
+                </div>
+                <div class="card-body">
+                    <a href="{{url_for('turma.editar_turma', id = t.id)}}"><button type="submit" class="btn btn-primary">Editar Turma</button></a>
+                    <a href="{{url_for('turma.adicionar_alunos', id = t.id)}}"><button type="submit" class="btn btn-primary">Gerenciar Alunos</button></a>
+                    <a href="{{url_for('turma.adicionar_professor', id = t.id)}}"><button type="submit" class="btn btn-primary">Gerenciar Professores</button></a>
+                </div>
+            </div>
+            {% endif %}
+            <br>
+            <div class="card">
+                <div class="card-header">
+                    Provas
+                </div>
+                <div class="card-body">
+                    {% for prova in provas %}
+                        {% if current_user.urole == 'professor' %}
+                            <a href="{{url_for('prova.ver_prova_correta', _id = prova.id)}}" type="button" class="btn btn-light col-md-12 mb-2" role="button">
+                        {% else %}
+                            <a href="{{url_for('prova.responder_prova', _id = prova.id)}}" type="button" class="btn btn-light col-md-12 mb-2" role="button">
+                        {% endif %}
+                                <div class="d-flex justify-content-between">
+                                    <div>{{ prova.descricao }}</div>
+                                </div>
+                            </a>
+                    {% endfor %}
+                </div>
+            </div>   
+
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+{% endblock %}

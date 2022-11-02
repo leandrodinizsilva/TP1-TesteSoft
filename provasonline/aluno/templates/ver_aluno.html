@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% set active_page = "alunos" %}
+{% block title %}Alunos{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <h4>Perfil de {{aluno.nome}}</h4><br>
+
+    <div class="card">
+        <div class="card-header">
+          Turmas
+        </div>
+        <div class="card-body">
+            {% for turma in turmas %}
+            {% if current_user.urole == 'professor' %}
+            <a href="{{url_for('turma.ver_turma', id = turma.turma_id)}}" type="button" class="btn btn-light col-md-12 mb-2" role="button">
+            {% else %}
+            <a type="button" class="btn btn-light col-md-12 mb-2" role="button">
+            {% endif %}
+                <div class="d-flex justify-content-start">
+                    {{ turma.turma_nome }} - {{ turma.descricao }} 
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <br>
+    <div class="card">
+        <div class="card-header">
+            Revisões de Provas
+        </div>
+        <div class="card-body">
+            {% for prova in provas %}
+            <a href="{{url_for('prova.ver_correcao', id_prova = prova.prova_id, id_aluno = aluno.id)}}" type="button" class="btn btn-light col-md-12 mb-2" role="button">
+                <div class="d-flex justify-content-between">
+                    <div>{{ prova.descricao }}</div>
+                    <div>Nota: {{ prova.nota }}&nbsp;</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

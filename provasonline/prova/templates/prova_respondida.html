@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="mb-4">
+            <h4>{{ prova.descricao }}</h4>
+        </div>
+
+        <script>cont = 1;</script>
+
+        {% for resposta in respostas %}
+        <div class="card mb-3">
+            <div class="card-header" id="teste{{ resposta.pergunta }}">
+                <script>document.getElementById("teste{{ resposta.pergunta }}").innerHTML="Questão "+cont;</script>
+            </div>
+            
+            <div class="card-body">               
+                <p class="card-text">{{ resposta.pergunta_obj.descricao }}</p>
+                
+                {% for opcao in resposta.pergunta_obj.opcoes %}
+                <div class="input-group mb-3">
+                    <div class="input-group-text">
+                        {% if resposta.opcao == opcao.id %}
+                        <input class="form-check-input mt-0" type="radio" name="op{{ resposta.pergunta_obj.id }}" value="{{ opcao.id }}" checked disabled>
+                        {% else %}
+                        <input class="form-check-input mt-0" type="radio" name="op{{ resposta.pergunta_obj.id }}" value="{{ opcao.id }}" disabled>
+                        {% endif %}
+                    </div>
+                    <input type="text" class="form-control" value="{{ opcao.descricao }}" disabled>                    
+                </div>
+                {% endfor %}                
+            </div>
+        </div>
+
+        <script>cont++;</script>  
+        {% endfor %}
+    </div>    
+
+{% endblock %}

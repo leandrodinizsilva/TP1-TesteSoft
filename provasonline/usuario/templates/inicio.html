@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% set active_page = "home" %}
+
+{% block content %}
+
+<div class="container">
+	<h5>Minhas Turmas</h5><br>
+
+	{% for turma in turmas %}
+	<div class="col-md-12 mb-2">
+		<a href="{{ url_for('turma.ver_turma', id=turma.id) }}" type="button" class="btn btn-outline-secondary col-md-12 mb-2" role="button">
+			<div class="d-flex justify-content-start">
+				{{ turma.nome }} 
+			</div>
+			<div class="d-flex justify-content-end">
+				{{ turma.descricao }}
+			</div>
+		</a>
+	</div>
+	{% endfor %}
+
+</div>
+{% endblock %}

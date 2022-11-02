@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="text-align: center;">Cadastro de Usuário</h2>
+<div class="container">
+	<form action="" method="POST">
+		{{ form.csrf_token }}
+		<div class="form-group row">
+			<label class="col-12 col-lg-6 offset-lg-1 col-form-label">{{form.nome.label}}</label>
+			<div class="col-12 col-lg-6 offset-lg-1">{{form.nome(class_="form-control")}}</div>
+		</div>
+		{% for e in form.errors.nome %}
+		<div class="alert alert-danger">{{ e }}</div>
+		{% endfor %}
+
+		<div class="form-group row">
+			<label class="col-12 col-lg-6 offset-lg-1 col-form-label">{{form.login.label}}</label>
+			<div class="col-12 col-lg-6 offset-lg-1">{{form.login(class_="form-control")}}</div>
+		</div>
+		{% for e in form.errors.login %}
+		<div class="alert alert-danger">{{ e }}</div>
+		{% endfor %}
+
+		<div class="form-group row">
+			<label class="col-12 col-lg-6 offset-lg-1 col-form-label">{{form.senha.label}}</label>
+			<div class="col-12 col-lg-6 offset-lg-1">{{form.senha(class_="form-control")}}</div>
+		</div>
+		{% for e in form.errors.senha %}
+		<div class="alert alert-danger">{{ e }}</div>
+		{% endfor %}
+
+		<div class="form-group row">
+			<label class="col-12 col-lg-6 offset-lg-1 col-form-label">{{form.urole.label}}</label>
+			<div class="col-12 col-lg-6 offset-lg-1">{{form.urole(class_="form-control")}}</div>
+		</div>
+		{% for e in form.errors.urole %}
+		<div class="alert alert-danger">{{ e }}</div>
+		{% endfor %}
+		{{form.submit(class_='btn btn-primary')}}
+	</form>
+</div>
+{% endblock %}

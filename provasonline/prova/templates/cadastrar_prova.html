@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% set active_page = "provas" %}
+{% block title %}Criar Prova{% endblock %}
+
+{% block content %}
+
+<form action="" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <div class="container">
+
+        <div class="row g-3 mb-5">
+            <div class="col-md-3">
+                <label for="prova" class="form-label">Descrição:</label>
+                <input type="text" class="form-control" id="prova" name="prova" required>
+            </div>
+            <div class="col-md-5">
+                <label for="prova" class="form-label">Turma:</label>
+                <select class="form-select" id="turma" name="turma" aria-label="Default select example" required>
+                    <option value="" selected></option>
+                    {% for turma in turmas %}
+                    <option value="{{turma.id}}">{{turma.nome}} - {{turma.descricao}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="data" class="form-label">Data:</label>
+                <input type="date" class="form-control" id="data" name="data" required>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-10 ">
+                <label for="pergunta" class="form-label">Pergunta 1:</label>
+                <input type="text" class="form-control" id="pergunta" name="pergunta0" required>
+            </div>
+          
+            <div class="col-md-2">
+                <label for="valor" class="form-label">Valor:</label>
+                <input type="number" min="0" class="form-control" id="valor" name="valor0" required>
+            </div>     
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Opção 1</span>
+            <input type="text" class="form-control" id="opcao1" name="opcao01" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+            
+            <div class="input-group-text">
+                <input class="form-check-input mt-0" type="radio" value="1" id="radio1" name="correta0" required>
+            </div>        
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Opção 2</span>
+            <input type="text" class="form-control" id="opcao2" name="opcao02" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+            
+            <div class="input-group-text">
+                <input class="form-check-input mt-0" type="radio" value="2" id="radio2" name="correta0" required>
+            </div> 
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Opção 3</span>
+            <input type="text" class="form-control" id="opcao3" name="opcao03" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+            
+            <div class="input-group-text">
+                <input class="form-check-input mt-0" type="radio" value="3" id="radio3" name="correta0" required>
+            </div> 
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Opção 4</span>
+            <input type="text" class="form-control" id="opcao4" name="opcao04" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+            
+            <div class="input-group-text">
+                <input class="form-check-input mt-0" type="radio" value="4" id="radio4" name="correta0" required>
+            </div> 
+        </div>
+
+        <div id="saida"></div>
+
+        <div class="d-flex justify-content-between">
+            <a class="btn btn-primary" id="add_quest">Adicionar</a>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+    </div>    
+
+    <input type="hidden" id="numero_de_perguntas" name="numero_de_perguntas" value="1" />
+    <input type="hidden" id="valor_total" name="valor_total" value="1" />
+</form>
+
+<template id="templateLinha">
+    <br>
+    <div class="row g-3 mb-3">
+        <div class="col-md-10 ">
+            <label for="pergunta" class="form-label">Pergunta</label>
+            <input type="text" class="form-control" id="pergunta" required>
+        </div>
+      
+        <div class="col-md-2">
+            <label for="valor" class="form-label">Valor:</label>
+            <input type="number" min="0" class="form-control" id="valor" required>
+        </div>     
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Opção 1</span>
+        <input type="text" class="form-control" id="opcao1" name="opcao01" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+        
+        <div class="input-group-text">
+            <input class="form-check-input mt-0" type="radio" value="1" id="radio1" name="correta0" required>
+        </div>        
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Opção 2</span>
+        <input type="text" class="form-control" id="opcao2" name="opcao02" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+        
+        <div class="input-group-text">
+            <input class="form-check-input mt-0" type="radio" value="2" id="radio2" name="correta0" required>
+        </div> 
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Opção 3</span>
+        <input type="text" class="form-control" id="opcao3" name="opcao03" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+        
+        <div class="input-group-text">
+            <input class="form-check-input mt-0" type="radio" value="3" id="radio3" name="correta0" required>
+        </div> 
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Opção 4</span>
+        <input type="text" class="form-control" id="opcao4" name="opcao04" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+        
+        <div class="input-group-text">
+            <input class="form-check-input mt-0" type="radio" value="4" id="radio4" name="correta0" required>
+        </div> 
+    </div>
+</template>
+
+<script>
+    let cont = 1;
+    document.getElementById("add_quest").onclick = function clone() {
+        let container = document.getElementById("saida");  
+        let tempLinha = document.querySelector('#templateLinha');
+        let clone = document.importNode(tempLinha.content, true); 
+        var numero_de_perguntas = document.getElementById("numero_de_perguntas");
+        
+        const label = clone.querySelector("label");
+        label.textContent = "Pergunta " + (cont+1) + ": ";
+        clone.querySelector("#pergunta").name = "pergunta" + cont;
+        clone.querySelector("#valor").name = "valor" + cont;
+
+        clone.querySelector("#opcao1").name = "opcao" + cont + 1;
+        clone.querySelector("#opcao2").name = "opcao" + cont + 2;
+        clone.querySelector("#opcao3").name = "opcao" + cont + 3;
+        clone.querySelector("#opcao4").name = "opcao" + cont + 4;
+
+        clone.querySelector("#radio1").name = "correta" + cont;
+        clone.querySelector("#radio2").name = "correta" + cont;
+        clone.querySelector("#radio3").name = "correta" + cont;
+        clone.querySelector("#radio4").name = "correta" + cont;
+
+        var radios = document.getElementsByName('correta'+cont);
+        radios.required = this.checked;
+        
+        container.appendChild(clone);
+        cont++;
+
+        numero_de_perguntas.value = cont;
+    }
+</script>
+
+{% endblock %}
