@@ -1,0 +1,20 @@
+name: Github CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest # Os comandos serão executados em um sistema operacional Linux
+
+    steps:
+
+      - name: Build
+        run: python app.py # Compila o código fonte
+
+      - name: Unit Test
+        run: python -m unittest testesUnidade/teste1.py # Executada os testes de unidade
