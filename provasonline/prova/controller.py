@@ -30,14 +30,14 @@ def cadastrar_prova():
 
         contador = 0
 
-        while (contador < int(numero_de_perguntas)):    
+        while (contador < int(numero_de_perguntas)):
             pergunta = request.form['pergunta'+str(contador)] 
             valor    = request.form['valor'+str(contador)] 
 
             valor_total = valor_total + int(valor)
-            
+
             questao = Pergunta(pergunta, prova.id, valor)
-            db.session.add(questao)    
+            db.session.add(questao)
             db.session.commit()
 
             opcao1   = request.form['opcao'+str(contador)+'1']
@@ -64,9 +64,9 @@ def cadastrar_prova():
             db.session.add(alternativa1)
             db.session.add(alternativa2)
             db.session.add(alternativa3)
-            db.session.add(alternativa4)                   
+            db.session.add(alternativa4)
 
-            contador = contador + 1    
+            contador = contador + 1
 
         prova.valor = valor_total
         
@@ -167,3 +167,6 @@ def ver_correcao(id_prova, id_aluno):
         if resposta.acertou:
             nota = nota + resposta.pergunta_obj.valor
     return render_template("ver_correcao.html", prova = prova, respostas = respostas, nota = nota, turma = turma)
+
+def nome():
+    return "leandro"
