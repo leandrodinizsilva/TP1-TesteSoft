@@ -22,7 +22,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Build
-        run: python app.py # Compila o código fonte
+        run: if [ -f app.py ]; then python app.py; fi
 
       - name: Unit Test
         run: python -m unittest testesUnidade/teste1.py # Executada os testes de unidade
