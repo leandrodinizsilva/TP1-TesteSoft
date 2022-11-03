@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest # Os comandos serão executados em um sistema operacional Linux
 
     steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2 # Faz o checkout do código recebido
+
       - name: Set up Python 3.8.8
         uses: actions/setup-python@v2
         with:
@@ -25,4 +28,4 @@ jobs:
         run: if [ -f app.py ]; then python app.py; fi
 
       - name: Unit Test
-        run: python -m unittest discover ../../testesUnidade/ # Executada os testes de unidade
+        run: python -m unittest discover ../testesUnidade/ # Executada os testes de unidade
