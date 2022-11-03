@@ -25,4 +25,4 @@ jobs:
         run: if [ -f app.py ]; then python app.py; fi
 
       - name: Unit Test
-        run: if [ -f testesUnidade/teste1.py]; then python -m unittest testesUnidade/teste1.py; fi # Executada os testes de unidade
+        run: if [ -f testesUnidade/teste1.py ]; then python -m unittest testesUnidade/teste1.py; fi # Executada os testes de unidade
