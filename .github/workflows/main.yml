@@ -19,6 +19,9 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8.8
+      - name: Set MariaDB
+        run: |
+          pip install mariadb
 
       - name: Install dependencies
         run: |
