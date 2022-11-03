@@ -20,9 +20,10 @@ jobs:
         with:
           python-version: 3.8.8
 
-      - name: Set MariaDB
-        run: |
-          pip install mariadb
+      - uses: mirromutth/mysql-action@v1.1
+        with:
+          mysql database: 'teste'
+          mysql user: 'developer' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Of course you can use secrets, too
 
       - name: Install dependencies
         run: |
