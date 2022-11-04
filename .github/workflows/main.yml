@@ -13,20 +13,19 @@ jobs:
     services:
       mysql:
         image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: 123123
-          MYSQL_DATABASE: teste
-        ports:
-            - '8888:3306'
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
+      env:
+        DB_DATABASE: teste
+        DB_USER: root
+        DB_PASSWORD: 123123
 
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2 # Faz o checkout do código recebido
 
-      - name: Start DB
-        run: mysql -h 127.0.0.1 --port 8888 -u root -p123123 -e 'CREATE DATABASE IF NOT EXISTS teste;'
+      - name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
       - name: Set up Python 3.8.8
         uses: actions/setup-python@v2
@@ -39,7 +38,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo /etc/init.d/mysql start
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Build
