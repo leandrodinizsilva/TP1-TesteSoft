@@ -20,6 +20,10 @@ jobs:
         with:
           python-version: 3.8.8
 
+      - name: Set up MariaBd
+        run: |
+          sudo apt install libmariadb3 libmariadb-dev
+
       - name: Set up MySql
         uses: mirromutth/mysql-action@v1.1
         with:
