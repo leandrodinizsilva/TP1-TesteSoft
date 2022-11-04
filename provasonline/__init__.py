@@ -10,7 +10,7 @@ login_manager = LoginManager()
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'AGKDGYdsfdfsI874RY9823gsdgdfgYR08Y20sdfwe93287RrewgN2NYORN3827'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:123123@localhost/teste'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:123123@127.0.0.1/teste'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
