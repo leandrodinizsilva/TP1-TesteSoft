@@ -30,6 +30,8 @@ jobs:
           mysql database: 'teste'
           mysql user: 'root'
           mysql password: '123123'
+        run: |
+          sudo service mysql start
 
       - name: Install dependencies
         run: |
