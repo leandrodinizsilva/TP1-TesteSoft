@@ -24,6 +24,7 @@ jobs:
         uses: mirromutth/mysql-action@v1.1
         with:
           mysql database: 'teste'
+          mysql user: 'root'
 
       - name: Install dependencies
         run: |
