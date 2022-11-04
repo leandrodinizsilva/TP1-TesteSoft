@@ -53,9 +53,9 @@ jobs:
           sudo /etc/init.d/mysql start
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Build
-        run: |
-          if [ -f app.py ]; then python app.py; fi
+      # - name: Build
+      #   run: |
+      #     if [ -f app.py ]; then python app.py; fi
 
       - name: Unit Test
         run: python -m unittest discover ../testesUnidade/ # Executada os testes de unidade
