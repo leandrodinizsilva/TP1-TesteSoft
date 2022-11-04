@@ -37,7 +37,6 @@ jobs:
 
       - name: Build
         run: |
-          sudo service mysql -u root start
           if [ -f app.py ]; then python app.py; fi
 
       - name: Unit Test
