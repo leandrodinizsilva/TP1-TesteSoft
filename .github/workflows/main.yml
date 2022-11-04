@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest # Os comandos serão executados em um sistema operacional Linux
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:5.7
       env:
         DB_DATABASE: teste
         DB_USER: root
