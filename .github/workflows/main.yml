@@ -25,6 +25,7 @@ jobs:
         with:
           mysql database: 'teste'
           mysql user: 'root'
+          mysql password: ''
 
       - name: Install dependencies
         run: |
