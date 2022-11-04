@@ -30,15 +30,15 @@ jobs:
           mysql database: 'teste'
           mysql user: 'root'
           mysql password: '123123'
-        run: |
-          sudo service mysql start
 
       - name: Install dependencies
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Build
-        run: if [ -f app.py ]; then python app.py; fi
+        run: |
+          sudo service mysql start
+          if [ -f app.py ]; then python app.py; fi
 
       - name: Unit Test
         run: python -m unittest discover ../testesUnidade/ # Executada os testes de unidade
