@@ -1,4 +1,10 @@
 name: Github CI
+env:
+  MYSQL_DATABASE: teste
+  MYSQL_USER: root
+  MYSQL_PASSWORD: 123123
+  MYSQL_HOST: mysql-master
+
 on:
   push:
     branches:
@@ -12,13 +18,20 @@ jobs:
     runs-on: ubuntu-latest # Os comandos serão executados em um sistema operacional Linux
     services:
       mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: 123123
-          MYSQL_DATABASE: teste
+        image: mysql:5.7
         ports:
-            - '8888:3306'
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          - 3306/tcp
+        env:
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_PASSWORD }}
+        options: >-
+          --name=mysql-master
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
 
     steps:
