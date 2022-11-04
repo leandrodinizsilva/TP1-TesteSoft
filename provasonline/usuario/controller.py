@@ -81,7 +81,7 @@ def cadastrar_usuario():
                 db.session.add(entidade_usuario)
             else:
                 entidade_usuario = Aluno(nome = form.nome.data, login = form.login.data, senha = form.senha.data, urole = request.form["urole"])
-                db.session.add(entidade_usuario)  
+                db.session.add(entidade_usuario)
 
             db.session.commit()
             flash("Usuário cadastrado com sucesso!")

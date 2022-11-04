@@ -17,12 +17,15 @@ def cadastrar_prova():
     valor_total = 0
 
     if request.method == 'POST':
-
         descricao = request.form['prova']
         data      = datetime.strptime(request.form['data'], '%Y-%m-%d').date()
-        turma     = request.form['turma']
 
-        prova     = Prova(data, descricao, 0, current_user.id, turma)
+        if (not data_no_futuro(data)):
+            flash("Aviso: A data da prova cadastrada se encontra no passado.")
+
+        turma = request.form['turma']
+
+        prova = Prova(data, descricao, 0, current_user.id, turma)
         db.session.add(prova)
         db.session.commit()
 
@@ -31,8 +34,8 @@ def cadastrar_prova():
         contador = 0
 
         while (contador < int(numero_de_perguntas)):
-            pergunta = request.form['pergunta'+str(contador)] 
-            valor    = request.form['valor'+str(contador)] 
+            pergunta = request.form['pergunta'+str(contador)]
+            valor    = request.form['valor'+str(contador)]
 
             valor_total = valor_total + int(valor)
 
@@ -43,23 +46,16 @@ def cadastrar_prova():
             opcao1   = request.form['opcao'+str(contador)+'1']
             opcao2   = request.form['opcao'+str(contador)+'2']
             opcao3   = request.form['opcao'+str(contador)+'3']
-            opcao4   = request.form['opcao'+str(contador)+'4']   
+            opcao4   = request.form['opcao'+str(contador)+'4']
 
             correta  = int(request.form['correta'+str(contador)])
-            
+
             alternativa1 = Opcao(opcao1, False, questao.id)
             alternativa2 = Opcao(opcao2, False, questao.id)
             alternativa3 = Opcao(opcao3, False, questao.id)
             alternativa4 = Opcao(opcao4, False, questao.id)
 
-            if (correta == 1):
-                alternativa1.correta = True
-            elif (correta == 2):
-                alternativa2.correta = True
-            elif (correta == 3):
-                alternativa3.correta = True
-            else:        
-                alternativa4.correta = True
+            seleciona_alternativa_correta(alternativa1, alternativa2, alternativa3, alternativa4, correta)
 
             db.session.add(alternativa1)
             db.session.add(alternativa2)
@@ -69,10 +65,10 @@ def cadastrar_prova():
             contador = contador + 1
 
         prova.valor = valor_total
-        
+
         db.session.commit() 
         flash("Prova cadastrada com sucesso")
-        return redirect(url_for('prova.listar_provas'))    
+        return redirect(url_for('prova.listar_provas'))
 
     turmas = Turma.query.filter(Turma.id_professor == current_user.id)
     return render_template("cadastrar_prova.html", turmas = turmas)
@@ -124,24 +120,24 @@ def responder_prova(_id):
         return redirect(url_for('prova.ver_correcao', id_prova = _id, id_aluno = current_user.id)) 
 
     if request.method == 'POST':
-        nota = 0        
+        nota = 0
         for p in prova.perguntas: 
             opcao = request.form['op'+str(p.id)]
             
             aux = Opcao.query.get_or_404(opcao)
 
-            if (aux.correta == 1):                
+            if (aux.correta == 1):
                 resposta = Resposta(_id, p.id, opcao, 1, current_user.id) 
                 nota = nota + p.valor
             else:
                 resposta = Resposta(_id, p.id, opcao, 0, current_user.id)
 
-            db.session.add(resposta)   
-        
-        aluno_prova = AlunoProva(current_user.id, _id, nota)
-        db.session.add(aluno_prova)   
+            db.session.add(resposta)
 
-        db.session.commit()    
+        aluno_prova = AlunoProva(current_user.id, _id, nota)
+        db.session.add(aluno_prova)
+
+        db.session.commit()
 
         flash("Prova respondida com sucesso!")
         return redirect(url_for('prova.prova_respondida', _id = _id))  
@@ -162,11 +158,38 @@ def ver_correcao(id_prova, id_aluno):
     prova = Prova.query.get_or_404(id_prova)
     turma = Turma.query.get_or_404(prova.turma) 
     respostas = Resposta.query.filter(Resposta.prova == id_prova, Resposta.aluno == id_aluno).all()
-    nota = 0
-    for resposta in respostas:
-        if resposta.acertou:
-            nota = nota + resposta.pergunta_obj.valor
+    nota = nota_da_prova(respostas)
+
     return render_template("ver_correcao.html", prova = prova, respostas = respostas, nota = nota, turma = turma)
 
-def nome():
-    return "leandro"
+def data_no_futuro(dateI, today = date.today()):
+    result = True
+    if dateI < today:
+        result = False
+
+    return result
+
+def seleciona_alternativa_correta(alternativa1, alternativa2, alternativa3, alternativa4, alternativaCorreta):
+    if (alternativaCorreta == 1):
+        alternativa1.correta = True
+    elif (alternativaCorreta == 2):
+        alternativa2.correta = True
+    elif (alternativaCorreta == 3):
+        alternativa3.correta = True
+    else:
+        alternativa4.correta = True
+
+def corrige_questao(resposta):
+    acertou = False
+    if resposta.acertou:
+        acertou = True
+
+    return acertou
+
+def nota_da_prova(respostas):
+    nota = 0
+    for resposta in respostas:
+        if corrige_questao(resposta):
+            nota = nota + resposta.pergunta_obj.valor
+
+    return nota

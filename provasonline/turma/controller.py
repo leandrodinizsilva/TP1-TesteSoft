@@ -47,7 +47,7 @@ def adicionar_professor():
 @turma.route("/listar_turmas", methods=["GET","POST"])
 @login_required(role=[usuario_urole_roles['PROFESSOR']])
 def listar_turmas():
-    turmas = Turma.query.filter(Turma.id_professor == current_user.id)    
+    turmas = Turma.query.filter(Turma.id_professor == current_user.id)
     return render_template("listar_turmas.html", turmas=turmas)
 
 @turma.route("/ver_turma", methods=["GET","POST"])
