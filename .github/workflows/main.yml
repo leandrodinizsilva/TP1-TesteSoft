@@ -10,6 +10,18 @@ on:
 jobs:
   pipeline:
     runs-on: ubuntu-latest # Os comandos serão executados em um sistema operacional Linux
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: 123123
+          MYSQL_DATABASE: teste
+        ports:
+            - '8888:3306'
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: actions/checkout@v1
+      - run: mysql -h 127.0.0.1 --port 8888 -u root -p123123 -e 'CREATE DATABASE IF NOT EXISTS teste;'
 
     steps:
       - name: Git Checkout
@@ -23,13 +35,6 @@ jobs:
       - name: Set up MariaBd
         run: |
           sudo apt install libmariadb3 libmariadb-dev
-
-      - name: Set up MySql
-        uses: samin/mysql-action@v1
-        with:
-          mysql database: 'teste'
-          mysql user: 'root'
-          mysql password: '123123'
 
       - name: Install dependencies
         run: |
