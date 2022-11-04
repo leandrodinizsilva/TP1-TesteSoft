@@ -58,4 +58,4 @@ jobs:
       #     if [ -f app.py ]; then python app.py; fi
 
       - name: Unit Test
-        run: if [ -f requirements.txt ]; then  python -m unittest discover ../testesUnidade/ ; fi # Executada os testes de unidade
+        run: if [ -f requirements.txt ]; then  python -m unittest discover testesUnidade/ ; fi # Executada os testes de unidade
