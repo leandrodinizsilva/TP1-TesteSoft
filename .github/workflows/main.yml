@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest # Os comandos serão executados em um sistema operacional Linux
     services:
       mysql:
-        image: mysql:latest
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: 123123
           MYSQL_DATABASE: teste
@@ -39,7 +39,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo /etc/init.d/mysql start
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Build
