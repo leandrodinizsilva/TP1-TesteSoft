@@ -11,6 +11,7 @@
     </div>    
     {% endif %}
 
+
     {% for prova in provas %} 
     {% if current_user.urole == 'professor' %}
         <a href="{{url_for('prova.ver_prova_correta', _id = prova.prova_id)}}" type="button" class="btn btn-outline-secondary col-md-12 mb-2" role="button">
@@ -21,7 +22,7 @@
         {% if prova.nota != None %}
             <a href="{{url_for('prova.responder_prova', _id = prova.prova_id)}}" type="button" class="btn btn-outline-secondary col-md-12 mb-2" role="button">
             <div class="d-flex justify-content-between">
-                <div>{{ prova.descricao }}</div><div>Nota: {{ prova.nota }}/{{ prova.valor }}</div>
+                <div>{{ prova.descricao }}</div><div>Nota: {{ prova.nota }}/{{ prova.valor }} | {{percentual[loop.index-1]}}</div>
             </div>
         {% else %}
             <a href="{{url_for('prova.responder_prova', _id = prova.prova_id)}}" type="button" class="btn btn-outline-primary col-md-12 mb-2" role="button">
@@ -38,22 +39,3 @@
 </div>
 
 {% endblock %}
-
-<h4>Melhoras Provas</h4><br>
-{% for m_prova in melhores %}
-    {% if m_prova.nota != None %}
-        <a href="{{url_for('prova.responder_prova', _id = m_prova.prova_id)}}" type="button" class="btn btn-outline-secondary col-md-12 mb-2" role="button">
-        <div class="d-flex justify-content-between">
-            <div>{{ m_prova.descricao }}</div><div>Nota: {{ m_prova.nota }}/{{ m_prova.valor }}</div>
-        </div>
-    {% else %}
-        <a href="{{url_for('prova.responder_prova', _id = m_prova.prova_id)}}" type="button" class="btn btn-outline-primary col-md-12 mb-2" role="button">
-        <div class="d-flex justify-content-between">
-            <div>{{ m_prova.descricao }}</div><div>Nota: 0/{{ m_prova.valor }}</div>
-         </div>
-    {% endif %}
-    <div class="d-flex justify-content-between">            
-        <div style="font-size: smaller;">{{ m_prova.turma }} - {{m_prova.turma_descricao}}</div><div>{{ m_prova.data.strftime("%d/%m/%Y") }}</div>
-    </div>
-</a>
-{% endfor %}

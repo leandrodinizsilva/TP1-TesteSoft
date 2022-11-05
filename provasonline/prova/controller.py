@@ -109,8 +109,10 @@ def listar_provas():
                                             (Turma.descricao).label("turma_descricao"))
                                 .filter(Professor.id == current_user.id)).all() 
 
-    
-    return render_template("listar_provas.html", provas = provas)
+
+    percentuais = adicionar_percentual(provas)
+
+    return render_template("listar_provas.html", provas = provas, percentual = percentuais)
 
 @prova.route("/listar_notas", methods=["GET","POST"])
 @login_required()
@@ -183,8 +185,9 @@ def ver_correcao(id_prova, id_aluno):
     turma = Turma.query.get_or_404(prova.turma) 
     respostas = Resposta.query.filter(Resposta.prova == id_prova, Resposta.aluno == id_aluno).all()
     nota = nota_da_prova(respostas)
+    porcentagem = nota_para_porcentagem(prova.valor, nota)
 
-    return render_template("ver_correcao.html", prova = prova, respostas = respostas, nota = nota, turma = turma)
+    return render_template("ver_correcao.html", prova = prova, respostas = respostas, nota = nota, turma = turma, percentual = nota)
 
 def data_no_futuro(dateI, today = date.today()):
     result = True
@@ -222,8 +225,16 @@ def remove_espacos_texto(texto):
     return texto.strip()
 
 def melhores_notas(provas):
+    zeradas = provas_que_zerei(provas)
+    provas = remove_provas_que_zerei(provas, zeradas)
     newlist = sorted(provas, key=lambda x: x.nota, reverse=True)
     return newlist
+
+def remove_provas_que_zerei(melhores_provas, provas_que_zerei):
+    melhores_provas = set(melhores_provas)
+    provas_que_zerei = set(provas_que_zerei)
+    difference = [x for x in melhores_provas if x not in provas_que_zerei]
+    return difference
 
 def provas_que_zerei(provas):
     result = []
@@ -232,3 +243,22 @@ def provas_que_zerei(provas):
             result.append(prova)
     
     return result
+
+def adicionar_percentual(provas):
+    percentuais = []
+    for i in range(len(provas)):
+        porcetagem = nota_para_porcentagem(provas[i].valor, provas[i].nota)
+        porcetagem = formatar_para_porcentagem(porcetagem)
+        percentuais.append(porcetagem)
+
+    return percentuais
+
+def formatar_para_porcentagem(valor):
+    valor = str(round(valor, 2))
+    valor = str(valor) + '%'
+    return valor
+
+def nota_para_porcentagem(total, parcial):
+    nota = (100 * parcial) / total
+
+    return nota

@@ -51,6 +51,16 @@ class CadastrarProvas(unittest.TestCase):
         provas = melhores_notas(provas)
         self.assertEqual(provas, provasOrdenadas)
 
+    def testSortProvasPelasMelhoresERemoveProvasZeradas(self):
+        prova1 = AlunoProva(1,1,0)
+        prova2 = AlunoProva(1,2,7)
+        prova3 = AlunoProva(1,3,9)
+        prova4 = AlunoProva(1,4,3)
+        provasOrdenadas = [prova3, prova2, prova4]
+        provas = [prova1, prova2, prova3, prova4]
+        provas = melhores_notas(provas)
+        self.assertEqual(provas, provasOrdenadas)
+
     def testSomenteProvasQueZerei(self):
         prova1 = AlunoProva(1,1,0)
         prova2 = AlunoProva(1,2,7)
@@ -60,6 +70,37 @@ class CadastrarProvas(unittest.TestCase):
         provas = [prova1, prova2, prova3, prova4]
         provas = provas_que_zerei(provas)
         self.assertEqual(provas, provasZeradas)
+
+    def testNenhumaProvaZerada(self):
+        prova1 = AlunoProva(1,1,10)
+        prova2 = AlunoProva(1,2,7)
+        prova3 = AlunoProva(1,3,10)
+        prova4 = AlunoProva(1,4,3)
+        provasZeradas = []
+        provas = [prova1, prova2, prova3, prova4]
+        provas = provas_que_zerei(provas)
+        self.assertEqual(provas, provasZeradas)
+
+    def testRegraDe3NumeroParaPorcentagem(self):
+        parcial = 5
+        total = 10
+        resultado = nota_para_porcentagem(total, parcial)
+        self.assertEqual(resultado, 50.0)
+
+    def testAdicionarPorcentagemAoNumero(self):
+        numero = 50.0
+        resultado = formatar_para_porcentagem(numero)
+        self.assertEqual(resultado, '50.0%')
+
+    def testAdicionarPercentualComPorcentagemAProva(self):
+        provas = [Prova(1,1,10,1,1), Prova(1,1,10,1,1)]
+        provas[0].valor = 10
+        provas[0].nota = 5
+        provas[1].valor = 10
+        provas[1].nota = 8
+        percentuais = adicionar_percentual(provas)
+        comparar = ['50.0%', '80.0%']
+        self.assertEqual(percentuais, comparar)
 
 class CadastrarTurmas(unittest.TestCase):
     def testStringContemSomenteNumeros(self):
