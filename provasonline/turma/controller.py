@@ -67,6 +67,9 @@ def cadastrar_turma():
         # descricao = request.form['prova']
         nome = request.form['nome']
         descricao = request.form['descricao']
+        if string_contem_somente_numeros(descricao):
+            flash("A descrição da turma contem somente numeros")
+
         turma     = Turma(descricao, nome, current_user.id)
         db.session.add(turma)
         db.session.commit()
@@ -92,3 +95,7 @@ def adicionar_alunos():
         id = id_turma
         return redirect(url_for('turma.ver_turma', id=id))
     return render_template("adicionar_alunos.html", id = id, alunos = alunos)
+
+def string_contem_somente_numeros(texto):
+    result = texto.isnumeric()
+    return result

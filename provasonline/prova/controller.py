@@ -18,6 +18,8 @@ def cadastrar_prova():
 
     if request.method == 'POST':
         descricao = request.form['prova']
+        descricao = remove_espacos_texto(descricao)
+
         data      = datetime.strptime(request.form['data'], '%Y-%m-%d').date()
 
         if (not data_no_futuro(data)):
@@ -110,6 +112,28 @@ def listar_provas():
     
     return render_template("listar_provas.html", provas = provas)
 
+@prova.route("/listar_notas", methods=["GET","POST"])
+@login_required()
+def listar_notas():
+    provas = Prova.query.all()
+
+    provas = (AlunoTurma.query.join(Turma, Turma.id == AlunoTurma.turma_id)
+                                .join(Prova, Prova.turma == Turma.id)
+                                .outerjoin(AlunoProva, Prova.id == AlunoProva.prova_id)
+                                .add_columns((Prova.id).label("prova_id"),
+                                            (Prova.descricao).label("descricao"),
+                                            (Prova.data).label("data"),
+                                            (Prova.valor).label("valor"),
+                                            (AlunoProva.nota).label("nota"),
+                                            (Turma.nome).label("turma"),
+                                            (Turma.descricao).label("turma_descricao"))
+                                .filter(AlunoTurma.aluno_id == current_user.id)).all()
+
+    melhores_provas = melhores_notas(provas)
+    provasComNota0 = provas_que_zerei(provas)
+
+    return render_template("listar_notas.html", melhores = melhores_provas, zeradas = provasComNota0)
+
 @prova.route("/responder_prova/<_id>", methods=["GET","POST"])
 @login_required(role=[usuario_urole_roles['ALUNO']])
 def responder_prova(_id):
@@ -193,3 +217,18 @@ def nota_da_prova(respostas):
             nota = nota + resposta.pergunta_obj.valor
 
     return nota
+
+def remove_espacos_texto(texto):
+    return texto.strip()
+
+def melhores_notas(provas):
+    newlist = sorted(provas, key=lambda x: x.nota, reverse=True)
+    return newlist
+
+def provas_que_zerei(provas):
+    result = []
+    for prova in provas:
+        if prova.nota == 0:
+            result.append(prova)
+    
+    return result
