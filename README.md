@@ -1,4 +1,7 @@
 # tp01-engenharia-software
+## Grupo
+* Leandro Diniz Silva 2019105718
+* Thiago Henrique Moreira Santos 2019007074
 
 ## Tema  
 Sistema para aplicação de provas online e gerenciamento de turmas e notas  

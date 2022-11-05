@@ -3,6 +3,7 @@ from provasonline.prova.models.Prova import Opcao, Pergunta, Prova, Resposta, Al
 from provasonline.turma.models.Turma import Turma, AlunoTurma
 from provasonline.aluno.models.Aluno import Aluno
 from provasonline.professor.models.Professor import Professor
+from provasonline.utilities.string_treat import *
 from provasonline.constants import usuario_urole_roles
 from flask import Blueprint
 from flask import render_template, redirect, url_for, flash, request
@@ -19,6 +20,9 @@ def cadastrar_prova():
     if request.method == 'POST':
         descricao = request.form['prova']
         descricao = remove_espacos_texto(descricao)
+        temporizada = transforma_um_e_zero_em_bool(request.form['temporizada'])
+
+        tempo = request.form['tempo']
 
         data      = datetime.strptime(request.form['data'], '%Y-%m-%d').date()
 
@@ -27,7 +31,7 @@ def cadastrar_prova():
 
         turma = request.form['turma']
 
-        prova = Prova(data, descricao, 0, current_user.id, turma)
+        prova = Prova(data, descricao, 0, current_user.id, turma, temporizada, tempo)
         db.session.add(prova)
         db.session.commit()
 
@@ -98,6 +102,9 @@ def listar_provas():
                                             (Turma.nome).label("turma"),
                                             (Turma.descricao).label("turma_descricao"))
                                 .filter(AlunoTurma.aluno_id == current_user.id)).all() 
+                                
+        percentuais = adicionar_percentual(provas)
+        return render_template("listar_provas.html", provas = provas, percentual = percentuais)
     else:
         provas = (Professor.query.join(Turma, Turma.id_professor == Professor.id)
                                 .join(Prova, Prova.turma == Turma.id)
@@ -109,10 +116,10 @@ def listar_provas():
                                             (Turma.descricao).label("turma_descricao"))
                                 .filter(Professor.id == current_user.id)).all() 
 
+    return render_template("listar_provas.html", provas = provas)
 
-    percentuais = adicionar_percentual(provas)
 
-    return render_template("listar_provas.html", provas = provas, percentual = percentuais)
+
 
 @prova.route("/listar_notas", methods=["GET","POST"])
 @login_required()

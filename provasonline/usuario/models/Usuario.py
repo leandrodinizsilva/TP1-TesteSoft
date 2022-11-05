@@ -24,7 +24,7 @@ class Usuario(db.Model, UserMixin):
                 (urole == "professor", "professor"),
                 (urole == "aluno", "aluno"),
             ]
-         )        
+         )
     }
     
     def __init__(self, login, senha, nome, urole):

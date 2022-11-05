@@ -25,6 +25,3 @@ class Aluno(Usuario):
 		self.login		= login
 		self.senha 		= self.setSenha(senha)
 		self.urole		= urole
-
-
-	

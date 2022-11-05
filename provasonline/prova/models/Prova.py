@@ -6,11 +6,13 @@ class AlunoProva(db.Model):
     aluno_id = db.Column(db.Integer, db.ForeignKey('aluno.id', ondelete = 'CASCADE'), nullable = False, primary_key = True)
     prova_id = db.Column(db.Integer, db.ForeignKey('prova.id', ondelete = 'CASCADE'), nullable = False, primary_key = True)
     nota     = db.Column(db.Integer, nullable = False)
+    data_entrega = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
 
     def __init__(self, aluno_id, prova_id, nota):
         self.aluno_id = aluno_id
         self.prova_id = prova_id
         self.nota     = nota
+
 
 class Prova(db.Model):
 
@@ -19,17 +21,21 @@ class Prova(db.Model):
     descricao   = db.Column(db.Text, nullable = True)
     data        = db.Column(db.Date, nullable = False)
     valor       = db.Column(db.Integer, nullable = True)
+    temporizada = db.Column(db.Boolean, default=False)
+    tempo       = db.Column(db.Date, nullable = False)
     professor   = db.Column(db.Integer, db.ForeignKey('professor.id', ondelete = 'CASCADE'), nullable = True)
     turma       = db.Column(db.Integer, db.ForeignKey('turma.id', ondelete = 'CASCADE'), nullable = True)
-    
+
     perguntas   = db.relationship("Pergunta", backref='perguntas', lazy='dynamic')
-    
-    def __init__(self, data, descricao, valor, professor, turma):
+
+    def __init__(self, data, descricao, valor, professor, turma, temporizada, tempo):
         self.data      = data
         self.descricao = descricao
         self.valor     = valor
         self.professor = professor
         self.turma     = turma
+        self.temporizada = temporizada
+        self.tempo = tempo
 
 class Pergunta(db.Model):
 

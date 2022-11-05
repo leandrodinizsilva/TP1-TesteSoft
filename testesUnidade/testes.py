@@ -1,6 +1,9 @@
 import unittest
 from provasonline.prova.controller import *
 from provasonline.turma.controller import *
+from provasonline.utilities.string_treat import *
+from provasonline.usuario.models.Usuario import *
+
 import datetime
 
 class CadastrarProvas(unittest.TestCase):
@@ -93,7 +96,7 @@ class CadastrarProvas(unittest.TestCase):
         self.assertEqual(resultado, '50.0%')
 
     def testAdicionarPercentualComPorcentagemAProva(self):
-        provas = [Prova(1,1,10,1,1), Prova(1,1,10,1,1)]
+        provas = [Prova(1,1,10,1,1,0,0), Prova(1,1,10,1,1,0,0)]
         provas[0].valor = 10
         provas[0].nota = 5
         provas[1].valor = 10
@@ -102,11 +105,64 @@ class CadastrarProvas(unittest.TestCase):
         comparar = ['50.0%', '80.0%']
         self.assertEqual(percentuais, comparar)
 
-class CadastrarTurmas(unittest.TestCase):
+class UtilidadesString(unittest.TestCase):
     def testStringContemSomenteNumeros(self):
         valor = string_contem_somente_numeros('123123123')
         self.assertTrue(valor)
-    
+
+    def testStringContemSomenteNumerosComEspacoNoMeio(self):
+        valor = string_contem_somente_numeros('123 123 123 8798')
+        self.assertTrue(valor)
+
     def testStringNaoContemSomenteNumeros(self):
         valor = string_contem_somente_numeros('1231letra23123')
         self.assertFalse(valor)
+
+    def testStringNaoContemSomenteNumerosComEspacosNoMeio(self):
+        valor = string_contem_somente_numeros('123 123 teste 123 tes12')
+        self.assertFalse(valor)
+
+    def testEmailValido(self):
+        email = 'teste@gmail.com'
+        self.assertTrue(checkEmailRegex(email))
+
+    def testEmailNaoValido(self):
+        email = 'testegmail.com'
+        self.assertFalse(checkEmailRegex(email))
+
+    def testTranformaSimEmBool(self):
+        string_yes1 = '1'
+        string_yes2 = 'True'
+        string_yes3 = 'yes'
+        teste1 = transforma_um_e_zero_em_bool(string_yes1)
+        teste2 = transforma_um_e_zero_em_bool(string_yes2)
+        teste3 = transforma_um_e_zero_em_bool(string_yes3)
+        self.assertTrue(teste1)
+        self.assertTrue(teste2)
+        self.assertTrue(teste3)
+
+    def testTranformaNaoEmBool(self):
+        string_no1 = '0'
+        string_no2 = 'False'
+        string_no3 = 'no'
+        teste1 = transforma_um_e_zero_em_bool(string_no1)
+        teste2 = transforma_um_e_zero_em_bool(string_no2)
+        teste3 = transforma_um_e_zero_em_bool(string_no3)
+        self.assertFalse(teste1)
+        self.assertFalse(teste2)
+        self.assertFalse(teste3)
+
+class FuncoesDeUsuario(unittest.TestCase):
+    def testContrutorEncriptaSenha(self):
+        senhaUsada = '123123'
+        usuario = Usuario('teste1', senhaUsada, 'teste', '1')
+        resultado = usuario.bcrypt.check_password_hash(usuario.senha, senhaUsada)
+        self.assertTrue(resultado)
+
+    def testSetSenhaMudaSenhaEEncripta(self):
+        senhaUsada = '123123'
+        usuario = Usuario('teste1', senhaUsada, 'teste', '1')
+        novaSenha = '321321'
+        usuario.setSenha(novaSenha)
+        resultado = usuario.bcrypt.check_password_hash(usuario.senha, novaSenha)
+        self.assertTrue(resultado)

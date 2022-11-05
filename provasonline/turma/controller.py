@@ -8,6 +8,7 @@ from provasonline.aluno.models.Aluno import Aluno
 from provasonline.prova.models.Prova import Prova
 from provasonline.usuario.models.Usuario import Usuario
 from provasonline.constants import usuario_urole_roles
+from provasonline.utilities.string_treat import *
 import json
 
 turma = Blueprint('turma', __name__, template_folder='templates')
@@ -96,6 +97,3 @@ def adicionar_alunos():
         return redirect(url_for('turma.ver_turma', id=id))
     return render_template("adicionar_alunos.html", id = id, alunos = alunos)
 
-def string_contem_somente_numeros(texto):
-    result = texto.isnumeric()
-    return result
