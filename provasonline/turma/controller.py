@@ -18,6 +18,7 @@ turma = Blueprint('turma', __name__, template_folder='templates')
 def editar_turma():
     id_turma = request.args.get('id')
     turmas = Turma.query.filter(Turma.id == id_turma).all()
+    print(f"EDITAR TURMAS: {turmas}")
     turmas = turmas[0]
     if request.method == 'POST':
         nome = request.form['nome']
@@ -58,6 +59,8 @@ def ver_turma():
     professores = db.session.query(Usuario, Turma).outerjoin(Turma, (Usuario.id == Turma.id_professor) & (Turma.id == id_turma)).filter(Turma.id_professor == Usuario.id).all()
     turmas = Turma.query.filter(Turma.id == id_turma).all()
     provas = Prova.query.filter(Prova.turma == id_turma)
+
+    print(f"Turmas Listadas: {turmas}")
     return render_template("ver_turma.html", turmas=turmas, professores=professores, provas = provas)
 
 @turma.route("/cadastrar_turma", methods=["GET", "POST"])
@@ -97,3 +100,29 @@ def adicionar_alunos():
         return redirect(url_for('turma.ver_turma', id=id))
     return render_template("adicionar_alunos.html", id = id, alunos = alunos)
 
+
+
+def quantidadeDeProfessoresCadastrados(turmas):
+    aux = []
+    for turma in turmas:
+        aux.append(turma.id_professor)
+    return len(list(set(aux)))
+
+def turmasPossuemDescricao(turmas):
+    for turma in turmas:
+        if turma.descricao == "":
+            return False
+    return True
+
+def existeTurmaComMaisDeUmAluno(turmas_aluno):
+    lista_de_tupla = []
+    for elem in turmas_aluno:
+         lista_de_tupla.append((elem.turma_id, elem.aluno_id))
+    
+    unique_ids = []
+    for pair in lista_de_tupla:
+        if pair[0] not in unique_ids:
+            unique_ids.append(pair[0])
+        else: 
+            return True
+    return False

@@ -13,6 +13,7 @@ aluno = Blueprint('aluno', __name__, template_folder='templates')
 @login_required(role=[usuario_urole_roles['PROFESSOR']])
 def listar_alunos():
     alunos = Aluno.query.all()
+
     return render_template("listar_alunos.html", alunos = alunos)
 
 @aluno.route("/ver_aluno/<_id>", methods=["GET","POST"])
@@ -33,5 +34,6 @@ def ver_aluno(_id):
                                            (Turma.descricao).label("descricao"),
                                            (Turma.nome).label("turma_nome"))
                               .filter(Aluno.id == _id)).all()
+
 
     return render_template("ver_aluno.html", aluno = aluno, provas = provas, turmas = turmas)

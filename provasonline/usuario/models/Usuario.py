@@ -37,5 +37,10 @@ class Usuario(db.Model, UserMixin):
         self.senha = self.bcrypt.generate_password_hash(senha).decode('utf-8')
         return self.senha
     
+    def mudarNome(self, newName):
+        if(newName != ""): # Nome de usuário não pode ser vazio
+            self.nome = newName
+        return self.nome
+    
     def get_id(self):
         return self.id
