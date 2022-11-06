@@ -6,7 +6,7 @@ class AlunoProva(db.Model):
     aluno_id = db.Column(db.Integer, db.ForeignKey('aluno.id', ondelete = 'CASCADE'), nullable = False, primary_key = True)
     prova_id = db.Column(db.Integer, db.ForeignKey('prova.id', ondelete = 'CASCADE'), nullable = False, primary_key = True)
     nota     = db.Column(db.Integer, nullable = False)
-    data_entrega = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+    data_entrega = db.Column(db.Date, server_default=db.func.now())
 
     def __init__(self, aluno_id, prova_id, nota):
         self.aluno_id = aluno_id

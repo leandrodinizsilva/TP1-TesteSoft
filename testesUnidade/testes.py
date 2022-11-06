@@ -105,6 +105,14 @@ class CadastrarProvas(unittest.TestCase):
         comparar = ['50.0%', '80.0%']
         self.assertEqual(percentuais, comparar)
 
+    def testProvaEntregueAtrasada(self):
+        result = prova_entrega_atrasada('2022/11/05','2022/11/06')
+        self.assertTrue(result)
+
+    def testProvaEntregueSemAtraso(self):
+        result = prova_entrega_atrasada('2022/11/05','2022/11/01')
+        self.assertFalse(result)
+
 class UtilidadesString(unittest.TestCase):
     def testStringContemSomenteNumeros(self):
         valor = string_contem_somente_numeros('123123123')

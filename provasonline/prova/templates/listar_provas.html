@@ -19,7 +19,15 @@
             <div>{{ prova.descricao }}</div><div>Valor: {{ prova.valor }}</div>
          </div>
     {% else %}
-        {% if prova.nota != None %}
+        {% if prova.nota != None and atrasadas[loop.index-1] == True %}
+            <a href="{{url_for('prova.responder_prova', _id = prova.prova_id)}}" type="button" class="btn btn-outline-danger col-md-12 mb-2" role="button">
+            <div class="d-flex justify-content-between">
+                <div>{{ prova.descricao }}</div><div>Nota: {{ prova.nota }}/{{ prova.valor }} | {{percentual[loop.index-1]}} </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <div>A prova foi entregue após a data limite.</div>
+            </div>
+        {% elif prova.nota != None %}
             <a href="{{url_for('prova.responder_prova', _id = prova.prova_id)}}" type="button" class="btn btn-outline-secondary col-md-12 mb-2" role="button">
             <div class="d-flex justify-content-between">
                 <div>{{ prova.descricao }}</div><div>Nota: {{ prova.nota }}/{{ prova.valor }} | {{percentual[loop.index-1]}}</div>

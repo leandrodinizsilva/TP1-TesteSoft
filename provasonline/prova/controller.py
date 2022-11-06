@@ -100,11 +100,14 @@ def listar_provas():
                                             (Prova.valor).label("valor"),
                                             (AlunoProva.nota).label("nota"),
                                             (Turma.nome).label("turma"),
+                                            (AlunoProva.data_entrega).label("data_entrega"),
+                                            (Prova.tempo).label("tempo"),
                                             (Turma.descricao).label("turma_descricao"))
                                 .filter(AlunoTurma.aluno_id == current_user.id)).all() 
-                                
+        print(provas)
         percentuais = adicionar_percentual(provas)
-        return render_template("listar_provas.html", provas = provas, percentual = percentuais)
+        atrasadas = adicionar_entregas_atrasadas(provas)
+        return render_template("listar_provas.html", provas = provas, percentual = percentuais, atrasadas = atrasadas)
     else:
         provas = (Professor.query.join(Turma, Turma.id_professor == Professor.id)
                                 .join(Prova, Prova.turma == Turma.id)
@@ -113,6 +116,8 @@ def listar_provas():
                                             (Prova.data).label("data"),
                                             (Prova.valor).label("valor"),
                                             (Turma.nome).label("turma"),
+                                            (AlunoProva.data_entrega).label("data_entrega"),
+                                            (Prova.tempo).label("tempo"),
                                             (Turma.descricao).label("turma_descricao"))
                                 .filter(Professor.id == current_user.id)).all() 
 
@@ -134,6 +139,8 @@ def listar_notas():
                                             (Prova.data).label("data"),
                                             (Prova.valor).label("valor"),
                                             (AlunoProva.nota).label("nota"),
+                                            (AlunoProva.data_entrega).label("data_entrega"),
+                                            (Prova.tempo).label("tempo"),
                                             (Turma.nome).label("turma"),
                                             (Turma.descricao).label("turma_descricao"))
                                 .filter(AlunoTurma.aluno_id == current_user.id)).all()
@@ -266,6 +273,34 @@ def formatar_para_porcentagem(valor):
     return valor
 
 def nota_para_porcentagem(total, parcial):
+    if parcial == None:
+        parcial = 0
+
     nota = (100 * parcial) / total
 
     return nota
+
+def adicionar_entregas_atrasadas(provas):
+    entregas = []
+    for i in range(len(provas)):
+        atrasada = prova_entrega_atrasada(provas[i].tempo, provas[i].data_entrega)
+        entregas.append(atrasada)
+
+    return entregas
+
+def prova_entrega_atrasada(data_limite, data_entrega):
+
+    if (data_limite is None):
+        return False
+    if (data_entrega is None):
+        return False
+
+    data_limite = data_limite
+    data_entrega = data_entrega
+    result = False
+    if (data_entrega <= data_limite):
+        result = False
+    else:
+        result = True
+    
+    return result
