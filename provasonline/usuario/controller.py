@@ -10,6 +10,7 @@ from flask import Blueprint
 from provasonline.usuario.models.Forms import LoginForm, UsuarioForm
 from flask_bcrypt import Bcrypt
 from provasonline import db, login_manager
+from sqlalchemy import text
 
 usuario = Blueprint('usuario', __name__, template_folder='templates')
 
@@ -84,7 +85,7 @@ def cadastrar_usuario():
                 db.session.add(entidade_usuario)
 
             db.session.commit()
-            flash("Usuário cadastrado com sucesso!")
+            flash("Usuario cadastrado com sucesso!")
         else:
             return redirect(url_for('usuario.cadastrar_usuario'))
 

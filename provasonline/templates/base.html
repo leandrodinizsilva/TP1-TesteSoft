@@ -21,17 +21,17 @@
               {%if current_user.is_authenticated %}
               <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                  <a class="nav-link {{ 'active' if active_page == 'home' else '' }}" href="{{url_for('usuario.index')}}">Home</a>
-                  <a class="nav-link {{ 'active' if active_page == 'provas' else '' }}" href="{{url_for('prova.listar_provas')}}">Provas</a> 
+                  <a id="nav-home" class="nav-link {{ 'active' if active_page == 'home' else '' }}" href="{{url_for('usuario.index')}}">Home</a>
+                  <a id="nav-provas" class="nav-link {{ 'active' if active_page == 'provas' else '' }}" href="{{url_for('prova.listar_provas')}}">Provas</a> 
                   {%if current_user.urole == 'professor' %}
-                  <a class="nav-link {{ 'active' if active_page == 'alunos' else '' }}" href="{{url_for('aluno.listar_alunos')}}">Alunos</a>
-                  <a class="nav-link {{ 'active' if active_page == 'turmas' else '' }}" href="{{url_for('turma.listar_turmas')}}">Turmas</a>
+                  <a id="nav-alunos" class="nav-link {{ 'active' if active_page == 'alunos' else '' }}" href="{{url_for('aluno.listar_alunos')}}">Alunos</a>
+                  <a id="nav-turmas" class="nav-link {{ 'active' if active_page == 'turmas' else '' }}" href="{{url_for('turma.listar_turmas')}}">Turmas</a>
                   {% else %}
-                  <a class="nav-link {{ 'active' if active_page == 'alunos' else '' }}" href="{{url_for('aluno.ver_aluno', _id = current_user.id )}}">Perfil</a>
-                  <a class="nav-link {{ 'active' if active_page == 'notas' else '' }}" href="{{url_for('prova.listar_notas', _id = current_user.id )}}">Notas</a> 
+                  <a id="nav-perfil" class="nav-link {{ 'active' if active_page == 'alunos' else '' }}" href="{{url_for('aluno.ver_aluno', _id = current_user.id )}}">Perfil</a>
+                  <a id="nav-notas" class="nav-link {{ 'active' if active_page == 'notas' else '' }}" href="{{url_for('prova.listar_notas', _id = current_user.id )}}">Notas</a> 
                   {% endif %}
 
-                  <a class="nav-link" href="{{url_for('usuario.logout')}}">Logout</a>
+                  <a id="nav-logout" class="nav-link" href="{{url_for('usuario.logout')}}">Logout</a>
                 </div>
               </div>
               {% endif %}
@@ -46,7 +46,7 @@
           <div>
             {% for message in messages %}
             <p>
-              <b>{{ message }}</b>
+              <b class="message">{{ message }}</b>
             </p>
             {% endfor %}
           </div>

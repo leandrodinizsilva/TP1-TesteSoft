@@ -94,6 +94,7 @@ def adicionar_alunos():
             db.session.add(alunoturma)
             db.session.commit()
         id = id_turma
+        flash("Turma editada com sucesso")
         return redirect(url_for('turma.ver_turma', id=id))
     return render_template("adicionar_alunos.html", id = id, alunos = alunos)
 

@@ -17,6 +17,7 @@
         <script>cont = 1;</script>
 
         {% for pergunta in prova.perguntas %}
+        {% set rowloop = loop %}
         <div class="card mb-3">
             <div class="card-header" id="teste{{ pergunta.id }}">
                 <script>document.getElementById("teste{{ pergunta.id }}").innerHTML="Questão "+cont;</script>
@@ -28,7 +29,7 @@
                 {% for opcao in pergunta.opcoes %}
                 <div class="input-group mb-3">
                     <div class="input-group-text">
-                        <input class="form-check-input mt-0" type="radio" name="op{{ pergunta.id }}" value="{{ opcao.id }}" required>
+                        <input id="resposta{{rowloop.index}}-{{loop.index}}" class="form-check-input mt-0" type="radio" name="op{{ pergunta.id }}" value="{{ opcao.id }}" required>
                     </div>
                     <input type="text" class="form-control" value="{{ opcao.descricao }}" disabled>                    
                 </div>
@@ -40,7 +41,7 @@
         {% endfor %}
 
         <div class="d-flex justify-content-end">    
-            <button type="submit" class="btn btn-success">Enviar</button>
+            <button id="btn-submit-resposta" type="submit" class="btn btn-success">Enviar</button>
         </div>
     </div>    
 

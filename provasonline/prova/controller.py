@@ -26,8 +26,8 @@ def cadastrar_prova():
 
         data      = datetime.strptime(request.form['data'], '%Y-%m-%d').date()
 
-        if (not data_no_futuro(data)):
-            flash("Aviso: A data da prova cadastrada se encontra no passado.")
+        # if (not data_no_futuro(data)):
+            # flash("Aviso: A data da prova cadastrada se encontra no passado.")
 
         turma = request.form['turma']
 
