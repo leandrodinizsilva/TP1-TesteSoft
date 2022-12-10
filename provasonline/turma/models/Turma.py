@@ -7,7 +7,7 @@ class Turma(db.Model):
     nome            = db.Column(db.Text, nullable = True)
 
     alunos = db.relationship("AlunoTurma", backref='turma', lazy='dynamic')
-    def __init__(self, nome, id_professor, descricao=""): 
+    def __init__(self, descricao, nome, id_professor):
         self.id_professor = id_professor
         self.descricao = descricao
         self.nome = nome
