@@ -10,6 +10,12 @@ from flask import render_template, redirect, url_for, flash, request
 from flask_login import LoginManager, current_user
 from datetime import datetime, date
 
+class PorcentagemNegativa(Exception):
+    def __init__(self, value):
+        self.parameter = value
+    def __str__(self):
+        return repr(self.parameter)
+
 prova = Blueprint('prova', __name__, template_folder='templates')
 
 @prova.route("/cadastrar_prova", methods=["GET","POST"])
@@ -90,6 +96,10 @@ def ver_prova_correta(_id):
 def listar_provas():
     provas = Prova.query.all()
     
+    #print(f"Provas: {provas}")
+    #print("\n")
+    #print("\n")
+
     if current_user.urole == 'aluno':
         provas = (AlunoTurma.query.join(Turma, Turma.id == AlunoTurma.turma_id)
                                 .join(Prova, Prova.turma == Turma.id)
@@ -104,9 +114,11 @@ def listar_provas():
                                             (Prova.tempo).label("tempo"),
                                             (Turma.descricao).label("turma_descricao"))
                                 .filter(AlunoTurma.aluno_id == current_user.id)).all() 
-        print(provas)
+        #print(f"Provas2: {provas}")
         percentuais = adicionar_percentual(provas)
         atrasadas = adicionar_entregas_atrasadas(provas)
+        #print(f"Formato de uma prova: {provas[0]}")
+
         return render_template("listar_provas.html", provas = provas, percentual = percentuais, atrasadas = atrasadas)
     else:
         provas = (Professor.query.join(Turma, Turma.id_professor == Professor.id)
@@ -261,22 +273,36 @@ def provas_que_zerei(provas):
 def adicionar_percentual(provas):
     percentuais = []
     for i in range(len(provas)):
-        porcetagem = nota_para_porcentagem(provas[i].valor, provas[i].nota)
+        aux = provas[i].valor
+        porcetagem = nota_para_porcentagem(aux if aux != 0 else 1, provas[i].nota)
         porcetagem = formatar_para_porcentagem(porcetagem)
         percentuais.append(porcetagem)
 
     return percentuais
 
 def formatar_para_porcentagem(valor):
+
+    if valor < 0:
+        raise PorcentagemNegativa("Porcentagem Negativa!")
     valor = str(round(valor, 2))
     valor = str(valor) + '%'
     return valor
 
 def nota_para_porcentagem(total, parcial):
+    nota = 0
     if parcial == None:
         parcial = 0
+    try:
+        nota = (100 * parcial) / total
+    except ZeroDivisionError:
+        nota = -1
+        #print("Divisao por zero!!")
+        raise ZeroDivisionError
+    
+    except TypeError:
+        nota = -1
+        raise TypeError
 
-    nota = (100 * parcial) / total
 
     return nota
 
@@ -298,9 +324,21 @@ def prova_entrega_atrasada(data_limite, data_entrega):
     data_limite = data_limite
     data_entrega = data_entrega
     result = False
-    if (data_entrega <= data_limite):
-        result = False
-    else:
-        result = True
+
+    try:
+        if (data_entrega <= data_limite):
+            result = False
+        else:
+            result = True
     
+    except TypeError:
+        raise TypeError
+
+    return result
+
+def quantidadeDeTurmasDoAluno(provas) -> int:
+    aux = []
+    for prova in provas:
+        aux.append(prova.turma)
+    result = len(list(set(aux)))
     return result

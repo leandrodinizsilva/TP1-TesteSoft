@@ -44,6 +44,11 @@ class CadastrarProvas(unittest.TestCase):
         texto1 = remove_espacos_texto(texto1)
         self.assertEqual("Matéria até o capitulo 2", texto1)
 
+    def testRemoveEspacosBrancosTextoEmStringsSoComEspacos(self):
+        texto1 = "           "
+        texto1 = remove_espacos_texto(texto1)
+        self.assertEqual("", texto1)
+
     def testSortProvasPelasMelhoresNotas(self):
         prova1 = AlunoProva(1,1,8)
         prova2 = AlunoProva(1,2,7)
@@ -113,6 +118,50 @@ class CadastrarProvas(unittest.TestCase):
         result = prova_entrega_atrasada('2022/11/05','2022/11/01')
         self.assertFalse(result)
 
+    def testEntregueNoMesmoDia(self): # Edge case, deveria considerar como futuro.
+        result = prova_entrega_atrasada('2022/11/05','2022/11/05')
+        self.assertFalse(result)
+
+    def testNotaParaPorcentagemThrowZeroDivisionException(self):
+        self.assertRaises(ZeroDivisionError, nota_para_porcentagem, total=0, parcial=4)
+
+    def testNotaParaPorcentagemThrowTypeErrorException(self):
+        self.assertRaises(TypeError, nota_para_porcentagem, total="teste", parcial=4)
+
+    def testProvaEntregueAtrasadaThrowTypeErrorException(self):
+        self.assertRaises(TypeError, prova_entrega_atrasada, '2022/11/05', 20221106)
+
+    def testFormatarParaPorcentagemThrowPorcentagemNegativaException(self):
+        self.assertRaises(PorcentagemNegativa, formatar_para_porcentagem, -50)
+
+    ## Implementação de atribuição de conceitos numa sprint futura do sistema
+    def testPassouNaProva(self):
+        parcial = 8
+        total = 10
+        result = nota_para_porcentagem(total, parcial)
+        self.assertTrue(result >= 60.0)
+
+    def testNaoPassouNaProva(self):
+        parcial = 4
+        total = 10
+        result = nota_para_porcentagem(total, parcial)
+        self.assertFalse(result >= 60.0)
+
+    def testDireitoAoExameEspecial(self):
+        parcial = 4
+        total = 10
+        result = nota_para_porcentagem(total, parcial)
+        self.assertTrue(result >= 40.0)
+
+    def testSemDireitoAoExameEspecial(self):
+        parcial = 3
+        total = 10
+        result = nota_para_porcentagem(total, parcial)
+        self.assertFalse(result >= 40.0)
+
+    #####
+    
+
 class UtilidadesString(unittest.TestCase):
     def testStringContemSomenteNumeros(self):
         valor = string_contem_somente_numeros('123123123')
@@ -129,14 +178,29 @@ class UtilidadesString(unittest.TestCase):
     def testStringNaoContemSomenteNumerosComEspacosNoMeio(self):
         valor = string_contem_somente_numeros('123 123 teste 123 tes12')
         self.assertFalse(valor)
+    
+    def testStringContemSomenteNumeroThrowTypeErrorException(self):
+        self.assertRaises(AttributeError, string_contem_somente_numeros, 2222222) #Not a string parameter
 
     def testEmailValido(self):
         email = 'teste@gmail.com'
         self.assertTrue(checkEmailRegex(email))
 
-    def testEmailNaoValido(self):
+    def testEmailNaoValidoSemArroba(self):
         email = 'testegmail.com'
         self.assertFalse(checkEmailRegex(email))
+
+    def testEmailNaoValidoEspacoVazio(self):
+        email = ' testegmail.com'
+        self.assertFalse(checkEmailRegex(email))
+    
+    def testEmailNaoValidoIniciaComCaracterEspecial(self):
+        email = '#testegmail.com'
+        self.assertFalse(checkEmailRegex(email))
+
+    def testCheckEmailRegexThrowTypeErrorException(self):
+        self.assertRaises(TypeError, checkEmailRegex, 22)
+    
 
     def testTranformaSimEmBool(self):
         string_yes1 = '1'
@@ -160,6 +224,17 @@ class UtilidadesString(unittest.TestCase):
         self.assertFalse(teste2)
         self.assertFalse(teste3)
 
+    def testTransformaCaracterEspecialEmBool(self):
+        especial_1 = '_'
+        especial_2 = '#'
+        teste1 = transforma_um_e_zero_em_bool(especial_1)
+        teste2 = transforma_um_e_zero_em_bool(especial_2)
+        self.assertTrue(teste1)
+        self.assertTrue(teste2)
+
+    def testTransformaUmEZeroEmBoolThrowTypeErrorException(self):
+        self.assertRaises(NonStringArgument, transforma_um_e_zero_em_bool, 22) # Not a string parameter
+
 class FuncoesDeUsuario(unittest.TestCase):
     def testContrutorEncriptaSenha(self):
         senhaUsada = '123123'
@@ -174,3 +249,62 @@ class FuncoesDeUsuario(unittest.TestCase):
         usuario.setSenha(novaSenha)
         resultado = usuario.bcrypt.check_password_hash(usuario.senha, novaSenha)
         self.assertTrue(resultado)
+
+    def testChangeUsername(self):
+        usuario = Usuario(nome="Nome1", login="login1", senha="123", urole="aluno")
+        usuario.mudarNome("Nome2")
+        self.assertEqual("Nome2", usuario.nome)
+
+    def testChangeUsernameComStringVazia(self):
+        usuario = Usuario(nome="Nome1", login="login1", senha="123", urole="aluno")
+        usuario.mudarNome("")
+        self.assertEqual("Nome1", usuario.nome)
+
+
+## Testes de "Turma"
+class TestesTurma(unittest.TestCase):
+    def testNumeroDeTurmasDeUmAluno(self):
+        provas_do_aluno = [Prova(1,1,10,1,1,0,0), Prova(1,1,10,0,1,0,0), Prova(1,1,10,2,2,0,0), Prova(1,1,10,0,0,0,0)]
+        result = quantidadeDeTurmasDoAluno(provas_do_aluno)
+        self.assertEqual(result, 3)
+
+    def testAlunoEstaMatriculadoEmMaisDeUmaTurma(self):
+        provas_do_aluno = [Prova(1,1,10,1,1,0,0), Prova(1,1,10,0,1,0,0), Prova(1,1,10,2,2,0,0), Prova(1,1,10,0,0,0,0)]
+        result = quantidadeDeTurmasDoAluno(provas_do_aluno)
+        self.assertTrue(result > 1)
+
+    def testQuantidadeDeProfessoresCadastrados(self):
+        turmas = [Turma(descricao="Desc 1", nome="Turma 1", id_professor=0), Turma(descricao="Desc 2", nome="Turma 2", id_professor=1), Turma(descricao="Desc 3", nome="Turma 3", id_professor=0)]
+        result = quantidadeDeProfessoresCadastrados(turmas)
+        self.assertEqual(result, 2)
+
+    def testTodasTurmasPossuemDescricao(self):
+        turmas = [Turma(descricao="Desc 1", nome="Turma 1", id_professor=0), Turma(descricao="Desc 2", nome="Turma 2", id_professor=1), Turma(descricao="Desc 3", nome="Turma 3", id_professor=0)]
+        result = turmasPossuemDescricao(turmas)
+        self.assertTrue(result)
+
+    def testNemTodasAsTurmasPossuemDescricao(self):
+        turmas = [Turma(nome="Turma 1", id_professor=0), Turma(nome="Turma 2", id_professor=1), Turma(nome="Turma 3", id_professor=0)]
+        result = turmasPossuemDescricao(turmas)
+        self.assertFalse(result)
+
+    def testExisteTurmaComMaisDeUmAluno(self):
+        alunos_turma = [AlunoTurma(0, 0), AlunoTurma(0, 1), AlunoTurma(0, 2),
+                        AlunoTurma(1, 0), AlunoTurma(0, 3), AlunoTurma(0, 4),
+                        AlunoTurma(2, 0), AlunoTurma(2, 4), AlunoTurma(0, 5),]
+
+        result = existeTurmaComMaisDeUmAluno(alunos_turma)
+        self.assertTrue(result)
+
+    def testNaoExisteTurmaComMaisDeUmAluno(self):
+        alunos_turma = [AlunoTurma(0, 0), AlunoTurma(0, 1), AlunoTurma(0, 2),
+                        AlunoTurma(1, 3), AlunoTurma(0, 5), AlunoTurma(0, 6),
+                        AlunoTurma(2, 7), AlunoTurma(2, 8), AlunoTurma(0, 9),]
+
+        result = existeTurmaComMaisDeUmAluno(alunos_turma)
+        self.assertFalse(result)
+        
+    #def teste1(self):
+    #    parcial = 5
+    #    resultado = nota_para_porcentagem("teste", parcial)
+    #    self.assertEqual(resultado, 50.0)
