@@ -32,6 +32,9 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2 # Faz o checkout do código recebido
+      
+      - name: Codecov
+        uses: codecov/codecov-action@v3
 
       - name: Verify MySQL connection
         run: |
@@ -59,3 +62,6 @@ jobs:
 
       - name: Unit Test
         run: if [ -f requirements.txt ]; then  python -m unittest discover testesUnidade/ ; fi # Executada os testes de unidade
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v2
