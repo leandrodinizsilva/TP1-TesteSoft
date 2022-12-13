@@ -35,6 +35,8 @@ jobs:
       
       - name: Codecov
         uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }
 
       - name: Verify MySQL connection
         run: |
@@ -65,5 +67,3 @@ jobs:
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }
