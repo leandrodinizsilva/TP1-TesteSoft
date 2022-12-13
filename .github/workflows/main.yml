@@ -66,5 +66,9 @@ jobs:
       - name: Unit Test
         run: if [ -f requirements.txt ]; then  python -m unittest discover testesUnidade/ ; fi # Executada os testes de unidade
 
+      - name: Coverage Report
+        run: |
+          coverage run -m unittest testesUnidade/testes.py
+
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v2
